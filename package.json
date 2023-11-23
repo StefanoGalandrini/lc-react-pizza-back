@@ -1,0 +1,28 @@
+{
+  "name": "pizzeria-api",
+  "version": "1.0.0",
+  "description": "API della Pizzeria Boolean che verranno usare dal FE React",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Florian-Bool-React-1/pizzeria-api.git"
+  },
+  "author": "Leica Florian",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Florian-Bool-React-1/pizzeria-api/issues"
+  },
+  "homepage": "https://github.com/Florian-Bool-React-1/pizzeria-api#readme",
+  "dependencies": {
+    "@prisma/client": "^5.6.0",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "prisma": "^5.6.0"
+  }
+}
