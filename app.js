@@ -19,11 +19,13 @@ app.use(express.json());
 // registro le rotte per le pizze
 app.use("/pizzas", pizzasRouter);
 
+// Registro il middleware per la gestione degli errori
+app.use(errorsHandlerMiddleware);
+
 // Registro il middleware per la gestione delle rotte non trovate
 app.use(routeNotFoundMiddleware);
 
-// Registro il middleware per la gestione degli errori
-app.use(errorsHandlerMiddleware);
+
 
 app.listen(port, () => {
   console.log(`App attiva su http://localhost:${port}`);
