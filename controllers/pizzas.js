@@ -3,6 +3,8 @@ const prisma = new PrismaClient();
 const NotFound = require("../exceptions/NotFound");
 const ValidationError = require("../exceptions/ValidationError");
 
+const { validationResult } = require("express-validator");
+
 async function index(req, res) {
   // Permetto di filtrare per name, price, available
   const filters = req.query.filter;
@@ -31,16 +33,16 @@ async function index(req, res) {
     };
   }
 
-  const total = await prisma.pizza.count({where: queryFilter});
+  const total = await prisma.pizza.count({ where: queryFilter });
 
   const data = await prisma.pizza.findMany({
-    // pagina da cui partire a contare. 
+    // pagina da cui partire a contare.
     // Siccome all'utente facciamo contare a partire da 1,
     // mentre il db parte da 0, sottraggo 1 dalla pagina corrente
     // skip indica a partire da quale indice iniziare a recuperare i dati
     skip: (page - 1) * perPage,
     // elementi per pagina
-    take: perPage, 
+    take: perPage,
     where: queryFilter,
     // Caso di un OR
     // where: {
@@ -57,13 +59,18 @@ async function index(req, res) {
     //     }
     //   ]
     // }
+    include: {
+      dettaglio: true,
+      ingredienti: true,
+      // recensioni: true,
+    },
   });
 
   return res.json({
     data,
     page,
     perPage,
-    total
+    total,
   });
 }
 
@@ -74,6 +81,11 @@ async function show(req, res, next) {
   const data = await prisma.pizza.findUnique({
     where: {
       id: parseInt(id),
+    },
+    include: {
+      dettaglio: true,
+      ingredienti: true,
+      recensioni: true,
     },
   });
 
@@ -92,28 +104,72 @@ async function show(req, res, next) {
 }
 
 async function store(req, res, next) {
-  const datiInIngresso = req.body;
+  const validation = validationResult(req);
 
-  if (!datiInIngresso.name) {
-    return next(new ValidationError("Il campo name è obbligatorio"));
+  // isEmpty si riferisce all'array degli errori di validazione.
+  // Se NON è vuoto, vuol dire che ci sono errori
+  if (!validation.isEmpty()) {
+    /* return res.status(400).json({
+      message: "Controllare i dati inseriti",
+      errors: validation.array(),
+    }); */
+
+    return next(
+      new ValidationError("Controllare i dati inseriti", validation.array())
+    );
   }
+
+  const datiInIngresso = req.body;
 
   const newPizza = await prisma.pizza.create({
     data: {
       name: datiInIngresso.name,
-      description: datiInIngresso.description,
       price: datiInIngresso.price,
       available: datiInIngresso.available,
       glutenFree: datiInIngresso.glutenFree,
       vegan: datiInIngresso.vegan,
-      image: datiInIngresso.image,
+      dettaglio: {
+        create: {
+          descrizione: datiInIngresso.description,
+          image: datiInIngresso.image,
+        },
+      },
+      ingredienti: {
+        // si aspetta come valore un array di oggetti con la chiave id
+        // [{id: 1}, {id: 2}, ....]
+        connect: datiInIngresso.ingredients.map((idIngrediente) => ({
+          id: idIngrediente,
+        })),
+      },
+    },
+    // specifico i dati di quali relazioni includere nella risposta
+    include: {
+      dettaglio: true,
+      ingredienti: {
+        select: {
+          id: true,
+          name: true,
+          gluten: true,
+          vegan: true,
+        },
+      },
     },
   });
 
   return res.json(newPizza);
 }
 
-async function update(req, res) {
+async function update(req, res, next) {
+  const validation = validationResult(req);
+
+  // isEmpty si riferisce all'array degli errori di validazione.
+  // Se NON è vuoto, vuol dire che ci sono errori
+  if (!validation.isEmpty()) {
+    return next(
+      new ValidationError("Controllare i dati inseriti", validation.array())
+    );
+  }
+  
   const id = req.params.id;
   const datiInIngresso = req.body;
 

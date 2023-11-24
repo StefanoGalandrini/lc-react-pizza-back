@@ -1,6 +1,8 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const pizzasRouter = require("./routers/pizzas");
+const ingredientsRouter = require("./routers/ingredients");
+const reviewsRouter = require("./routers/reviews");
 const errorsHandlerMiddleware = require("./middlewares/errorsHandler");
 const routeNotFoundMiddleware = require("./middlewares/routeNotFound");
 
@@ -18,6 +20,8 @@ app.use(express.json());
 
 // registro le rotte per le pizze
 app.use("/pizzas", pizzasRouter);
+app.use("/ingredients", ingredientsRouter);
+app.use("/reviews", reviewsRouter);
 
 // Registro il middleware per la gestione degli errori
 app.use(errorsHandlerMiddleware);

@@ -11,17 +11,55 @@ datasource db {
 }
 
 model Pizza {
+  id          Int             @id @default(autoincrement())
+  name        String          @db.VarChar(100)
+  price       Decimal         @db.Decimal(4, 2)
+  available   Boolean         @default(false)
+  glutenFree  Boolean         @default(false)
+  vegan       Boolean         @default(false)
+  recensioni  Recensione[]
+  dettaglio   PizzaDettaglio?
+  ingredienti Ingrediente[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
   // Nome della tabella nel database
   @@map("pizzas")
+}
 
+// Relazione 1-1
+model PizzaDettaglio {
   id          Int      @id @default(autoincrement())
-  name        String   @db.VarChar(100)
-  description String?  @db.Text
-  price       Decimal  @db.Decimal(4, 2)
+  descrizione String?  @db.Text
   image       String?  @db.Text
-  available   Boolean  @default(false)
-  glutenFree  Boolean  @default(false)
-  vegan       Boolean  @default(false)
+  pizzaId     Int      @unique // obbligatorio unique in caso di relazione 1-1
+  pizza       Pizza    @relation(fields: [pizzaId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  // Nome della tabella nel database
+  @@map("pizza_dettagli")
+}
+
+// relazione 1-N
+model Recensione {
+  id        Int      @id @default(autoincrement())
+  content   String   @db.Text
+  rating    Int      @default(0)
+  pizzaId   Int
+  // Ogni recensione può essere associata ad una sola pizza
+  pizza     Pizza    @relation(fields: [pizzaId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// relazione N-N
+model Ingrediente {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(100)
+  gluten    Boolean  @default(false)
+  vegan     Boolean  @default(false)
+  pizze     Pizza[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

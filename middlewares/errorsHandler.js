@@ -16,6 +16,7 @@ function sendRes(err, res) {
   return res.status(err.status ?? 500).json({
     message: err.message,
     error: err.constructor.name,
+    errors: err.errors ?? [],
   });
 }
 
