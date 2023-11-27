@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const pizzasRouter = require("./routers/pizzas");
 const ingredientsRouter = require("./routers/ingredients");
 const reviewsRouter = require("./routers/reviews");
+const authRouter = require("./routers/auth");
 const errorsHandlerMiddleware = require("./middlewares/errorsHandler");
 const routeNotFoundMiddleware = require("./middlewares/routeNotFound");
 
@@ -22,6 +23,7 @@ app.use(express.json());
 app.use("/pizzas", pizzasRouter);
 app.use("/ingredients", ingredientsRouter);
 app.use("/reviews", reviewsRouter);
+app.use("", authRouter) // registriamo le rotte senza alcun prefisso
 
 // Registro il middleware per la gestione degli errori
 app.use(errorsHandlerMiddleware);
