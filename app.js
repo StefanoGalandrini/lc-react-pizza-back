@@ -7,7 +7,7 @@ const errorsHandlerMiddleware = require("./middlewares/errorsHandler");
 const routeNotFoundMiddleware = require("./middlewares/routeNotFound");
 
 const app = express();
-const port = 3000;
+const port = 3005;
 
 dotenv.config();
 

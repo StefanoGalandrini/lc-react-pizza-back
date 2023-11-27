@@ -5,10 +5,14 @@ module.exports = {
   price: {
     in: ["body"],
     isFloat: {
+      errorMessage: "Price must be a float number",
       options: {
         min: 0,
         max: 100,
       },
+    },
+    notEmpty: {
+      errorMessage: "Price is required",
     },
     optional: true
   },

@@ -3,6 +3,7 @@ const router = express.Router();
 const pizzasController = require("../controllers/pizzas");
 const { body, checkSchema } = require("express-validator");
 const pizzaCreate = require("../validations/pizzaCreate");
+const {checkValidity} = require("../middlewares/schemaValidator");
 
 // GET /pizzas
 router.get("/", pizzasController.index);
@@ -22,7 +23,9 @@ router.post(
 );
 
 // PUT /pizzas/:id
-router.put("/:id", checkSchema(pizzaCreate), pizzasController.update);
+// router.put("/:id", checkSchema(pizzaCreate), pizzasController.update);
+// router.put("/:id", schemaValidator(pizzaCreate), pizzasController.update);
+router.put("/:id", checkSchema(pizzaCreate), checkValidity, pizzasController.update);
 
 // DELETE /pizzas/:id
 router.delete("/:id", pizzasController.destroy);

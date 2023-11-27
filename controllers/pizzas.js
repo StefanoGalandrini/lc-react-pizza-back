@@ -195,6 +195,30 @@ async function update(req, res, next) {
 }
 
 async function destroy(req, res) {
+  /* await prisma.pizza.update({
+    where: {
+      id: parseInt(req.params.id),
+    },
+    data: {
+      dettaglio: {
+        disconnect: true,
+      },
+      recensioni: {
+        disconnect: {
+          id: 1,
+        },
+        deleteMany: {
+
+        }
+      },
+      ingredienti: {
+        disconnect: {
+          id: 1,
+        },
+      }
+    }
+  }) */
+
   await prisma.pizza.delete({
     where: {
       id: parseInt(req.params.id),
