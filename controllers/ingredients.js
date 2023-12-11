@@ -1,6 +1,11 @@
 const {PrismaClient} = require("@prisma/client");
 const prisma = new PrismaClient();
 
+async function index(req, res){
+  const ingredients = await prisma.ingrediente.findMany();
+  return res.json(ingredients);
+}
+
 async function store(req, res){
   const datiInIngresso = req.body;
 
@@ -17,5 +22,6 @@ async function store(req, res){
 
 
 module.exports = {
+  index,
   store
 }

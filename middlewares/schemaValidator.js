@@ -1,4 +1,4 @@
-const { validationResult, checkSchema } = require("express-validator");
+const { validationResult, checkSchema, matchedData } = require("express-validator");
 
 function checkValidity(req, res, next) {
   const validation = validationResult(req);
@@ -6,6 +6,9 @@ function checkValidity(req, res, next) {
   if (!validation.isEmpty()) {
     return res.status(422).json(validation.array());
   }
+
+  // aggiungo al request una chiave contenente i dati validati
+  req.validateData = matchedData(req);
 
   next();
 }

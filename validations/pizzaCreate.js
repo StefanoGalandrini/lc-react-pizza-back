@@ -19,17 +19,20 @@ module.exports = {
   available: {
     in: ["body"],
     isBoolean: true,
-    optional: true
+    optional: true,
+    toBoolean: true
   },
   glutenFree: {
     in: ["body"],
     isBoolean: true,
-    optional: true
+    optional: true,
+    toBoolean: true
   },
   vegan: {
     in: ["body"],
     isBoolean: true,
-    optional: true
+    optional: true,
+    toBoolean: true
   },
   name: {
     in: ["body"],

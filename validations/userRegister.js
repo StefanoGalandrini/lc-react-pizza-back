@@ -18,7 +18,7 @@ module.exports = {
         min: 2,
       },
       errorMessage: "Il nome deve essere lungo almeno 2 caratteri",
-    },
+    }
   },
   email: {
     in: ["body"],

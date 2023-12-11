@@ -1,5 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const cors = require("cors");
 const pizzasRouter = require("./routers/pizzas");
 const ingredientsRouter = require("./routers/ingredients");
 const reviewsRouter = require("./routers/reviews");
@@ -10,7 +11,14 @@ const routeNotFoundMiddleware = require("./middlewares/routeNotFound");
 const app = express();
 const port = 3005;
 
+// Registro il middleware per la gestione del CORS
+app.use(cors({
+  origin: ["http://localhost:5173"],
+}));
+
 dotenv.config();
+
+app.use(express.static("public"));
 
 // Registro il middleware per il parsing del body
 // Ogni volta che verranno inviati dei dati al server 

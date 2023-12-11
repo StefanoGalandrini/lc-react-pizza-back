@@ -10,7 +10,7 @@ async function index(req, res) {
   const filters = req.query.filter;
   const queryFilter = {};
   const page = req.query.page || 1;
-  const perPage = 5;
+  const perPage = 20;
 
   // Se ho dei filtri e se questi contenono il campo name
   if (filters && filters.name) {
@@ -138,7 +138,7 @@ async function store(req, res, next) {
         // si aspetta come valore un array di oggetti con la chiave id
         // [{id: 1}, {id: 2}, ....]
         connect: datiInIngresso.ingredients.map((idIngrediente) => ({
-          id: idIngrediente,
+          id: +idIngrediente,
         })),
       },
     },
@@ -160,18 +160,14 @@ async function store(req, res, next) {
 }
 
 async function update(req, res, next) {
-  const validation = validationResult(req);
+  const file = req.file;
 
-  // isEmpty si riferisce all'array degli errori di validazione.
-  // Se NON è vuoto, vuol dire che ci sono errori
-  if (!validation.isEmpty()) {
-    return next(
-      new ValidationError("Controllare i dati inseriti", validation.array())
-    );
-  }
-  
   const id = req.params.id;
-  const datiInIngresso = req.body;
+  const datiInIngresso = req.validateData;
+
+  if (file) {
+    datiInIngresso.image = file.filename;
+  }
 
   // controllo che quella pizza esista
   const pizza = await prisma.pizza.findUnique({
@@ -185,7 +181,35 @@ async function update(req, res, next) {
   }
 
   const pizzaAggiornata = await prisma.pizza.update({
-    data: datiInIngresso,
+    data: {
+      name: datiInIngresso.name,
+      price: datiInIngresso.price,
+      available: datiInIngresso.available,
+      glutenFree: datiInIngresso.glutenFree,
+      vegan: datiInIngresso.vegan,
+      dettaglio: {
+        upsert: {
+          update: {
+            descrizione: datiInIngresso.description,
+            image: datiInIngresso.image,
+          },
+          create: {
+            descrizione: datiInIngresso.description,
+            image: datiInIngresso.image,
+          },
+          where: {
+            pizzaId: parseInt(id),
+          },
+        },
+      },
+      ingredienti: {
+        // si aspetta come valore un array di oggetti con la chiave id
+        // [{id: 1}, {id: 2}, ....]
+        connect: datiInIngresso.ingredients?.map((idIngrediente) => ({
+          id: +idIngrediente,
+        })),
+      },
+    },
     where: {
       id: parseInt(id),
     },
