@@ -105,6 +105,7 @@ async function show(req, res, next) {
 
 async function store(req, res, next) {
   const validation = validationResult(req);
+  const image = req.file;
 
   // isEmpty si riferisce all'array degli errori di validazione.
   // Se NON è vuoto, vuol dire che ci sono errori
@@ -119,29 +120,43 @@ async function store(req, res, next) {
     );
   }
 
-  const datiInIngresso = req.body;
+  const datiInIngresso = req.validatedData;
+
+  console.log(datiInIngresso);
+
+  const query = {
+    name: datiInIngresso.name,
+    price: datiInIngresso.price,
+    available: datiInIngresso.available,
+    glutenFree: datiInIngresso.glutenFree,
+    vegan: datiInIngresso.vegan,
+  };
+
+  if (image) {
+    datiInIngresso.image = image.filename;
+  }
+
+  if (datiInIngresso.image || datiInIngresso.description) {
+    query.dettaglio = {
+      create: {
+        descrizione: datiInIngresso.description,
+        image: datiInIngresso.image,
+      },
+    };
+  }
+
+  if (datiInIngresso.ingredients) {
+    query.ingredienti = {
+      // si aspetta come valore un array di oggetti con la chiave id
+      // [{id: 1}, {id: 2}, ....]
+      connect: datiInIngresso.ingredients.split(",").map((idIngrediente) => ({
+        id: +idIngrediente,
+      })),
+    };
+  }
 
   const newPizza = await prisma.pizza.create({
-    data: {
-      name: datiInIngresso.name,
-      price: datiInIngresso.price,
-      available: datiInIngresso.available,
-      glutenFree: datiInIngresso.glutenFree,
-      vegan: datiInIngresso.vegan,
-      dettaglio: {
-        create: {
-          descrizione: datiInIngresso.description,
-          image: datiInIngresso.image,
-        },
-      },
-      ingredienti: {
-        // si aspetta come valore un array di oggetti con la chiave id
-        // [{id: 1}, {id: 2}, ....]
-        connect: datiInIngresso.ingredients.map((idIngrediente) => ({
-          id: +idIngrediente,
-        })),
-      },
-    },
+    data: query,
     // specifico i dati di quali relazioni includere nella risposta
     include: {
       dettaglio: true,
@@ -163,7 +178,7 @@ async function update(req, res, next) {
   const file = req.file;
 
   const id = req.params.id;
-  const datiInIngresso = req.validateData;
+  const datiInIngresso = req.validatedData;
 
   if (file) {
     datiInIngresso.image = file.filename;

@@ -8,7 +8,7 @@ function checkValidity(req, res, next) {
   }
 
   // aggiungo al request una chiave contenente i dati validati
-  req.validateData = matchedData(req);
+  req.validatedData = matchedData(req);
 
   next();
 }

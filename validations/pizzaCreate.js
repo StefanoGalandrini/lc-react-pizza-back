@@ -14,29 +14,41 @@ module.exports = {
     notEmpty: {
       errorMessage: "Price is required",
     },
-    optional: true
+    optional: true,
   },
   available: {
     in: ["body"],
     isBoolean: true,
     optional: true,
-    toBoolean: true
+    toBoolean: true,
   },
   glutenFree: {
     in: ["body"],
     isBoolean: true,
     optional: true,
-    toBoolean: true
+    toBoolean: true,
   },
   vegan: {
     in: ["body"],
     isBoolean: true,
     optional: true,
-    toBoolean: true
+    toBoolean: true,
   },
   name: {
     in: ["body"],
     notEmpty: true,
-    optional: true
+    optional: true,
   },
-}
+  ingredients: {
+    in: ["body"],
+    optional: true,
+  },
+  image: {
+    in: ["body"],
+    optional: true,
+  },
+  description: {
+    in: ["body"],
+    optional: true,
+  }
+};

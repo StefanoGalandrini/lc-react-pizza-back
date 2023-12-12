@@ -31,13 +31,10 @@ router.get("/:id", pizzasController.show);
 // POST /pizzas
 router.post(
   "/",
-  multer({ storage: storage }).single("image"),
   // authHandler,
-  body("name").notEmpty(),
-  body("price").isFloat({ min: 0, max: 100 }),
-  body("available").isBoolean(),
-  body("glutenFree").isBoolean().optional(),
-  body("vegan").isBoolean(),
+  multer({ storage: storage }).single("image"),
+  checkSchema(pizzaCreate),
+  checkValidity,
   pizzasController.store
 );
 
@@ -47,7 +44,7 @@ router.post(
 router.put(
   "/:id",
   // authHandler,
-  authRoleHandler("admin"),
+  // authRoleHandler("admin"),
   multer({ storage: storage }).single("image"),
   checkSchema(pizzaCreate),
   checkValidity,
