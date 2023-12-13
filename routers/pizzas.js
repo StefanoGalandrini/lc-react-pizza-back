@@ -21,6 +21,7 @@ const storage = multer.diskStorage({
 // GET /pizzas
 router.get(
   "/",
+  authHandler,
   query("filters.name").optional().isString(),
   pizzasController.index
 );
